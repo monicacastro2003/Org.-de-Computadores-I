@@ -1,0 +1,42 @@
+     1                                  section .text
+     2                                      global print_array_int
+     3                                      extern printf
+     4                                  
+     5                                  print_array_int:
+     6 00000000 55                          push rbp
+     7 00000001 4889E5                      mov rbp, rsp
+     8 00000004 4154                        push r12              ; Preservar r12 (para o ponteiro do array)
+     9 00000006 4155                        push r13              ; Preservar r13 (para o tamanho)
+    10 00000008 4156                        push r14              ; Preservar r14 (para o contador i)
+    11                                  
+    12 0000000A 4989FC                      mov r12, rdi          ; r12 = ponteiro do array
+    13 0000000D 4989F5                      mov r13, rsi          ; r13 = tamanho do array
+    14 00000010 4D31F6                      xor r14, r14          ; i = 0
+    15                                  
+    16                                  .loop:
+    17 00000013 4D39EE                      cmp r14, r13          ; Compara i com tamanho
+    18 00000016 7D1A                        jge .fim
+    19                                  
+    20                                      ; Prepara args para printf
+    21 00000018 48BF-                       mov rdi, formato      ; Formato "%d\n" (primeiro arg)
+    21 0000001A [0000000000000000] 
+    22 00000022 438B34B4                    mov esi, [r12 + r14*4] ; array[i] (segundo arg)
+    23 00000026 31C0                        xor eax, eax           ; Nenhum registro SSE usado
+    24 00000028 E8(00000000)                call printf
+    25                                  
+    26 0000002D 49FFC6                      inc r14               ; i++
+    27 00000030 EBE1                        jmp .loop
+    28                                  
+    29                                  .fim:
+    30 00000032 415E                        pop r14               ; Restaura r14
+    31 00000034 415D                        pop r13               ; Restaura r13
+    32 00000036 415C                        pop r12               ; Restaura r12
+    33 00000038 5D                          pop rbp
+    34 00000039 C3                          ret
+    35                                  
+    36                                  section .data
+    37 00000000 25640A00                    formato db "%d", 10, 0  ; Formato: "%d\n"
+    38                                      
+    39                                  section .note.GNU-stack noalloc noexec nowrite progbits
+    40                                      
+    41                                      
